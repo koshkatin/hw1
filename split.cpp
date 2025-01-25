@@ -1,5 +1,5 @@
 /*
-CSCI 104: Homework 1 Problem 1 hi
+CSCI 104: Homework 1 Problem 1 
 
 Write a recursive function to split a sorted singly-linked
 list into two sorted linked lists, where one has the even 
@@ -17,7 +17,24 @@ the function below should be the only one in this file.
 void split(Node*& in, Node*& odds, Node*& evens)
 {
   /* Add code here */
-// WRITE YOUR CODE HERE
+
+  // --- v.ii : implementation without 'new' ---
+
+  if (!in) return;  // base case: NULL input
+  
+  Node* next = in->next;  // save the next input node
+
+  if (in->value % 2 == 0) { 
+    in->next = evens;
+    evens = in;
+  } else {
+    in->next = odds;
+    odds = in;
+  }
+
+  in = next; // move to the next input node
+
+  split(in, odds, evens);  // recurse
 }
 
 /* If you needed a helper function, write it here */
