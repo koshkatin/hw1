@@ -1,5 +1,5 @@
 /*
-CSCI 104: Homework 1 Problem 1
+CSCI 104: Homework 1 Problem 1 hi
 
 Write a recursive function to split a sorted singly-linked
 list into two sorted linked lists, where one has the even 
