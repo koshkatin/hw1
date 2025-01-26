@@ -86,9 +86,8 @@ Node* LL::get_head() const
 
 LL::~LL()
 {
-    Node* temp = head;
     while(head){
-        temp = head;
+        Node* temp = head;
         head = head->next;
         delete temp;
     }
