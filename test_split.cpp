@@ -14,17 +14,18 @@ g++ split.cpp test_split.cpp -o test_split
 #include "split.h"
 
 class LL {
-    Node* head;
-    
 public: 
     LL() : head(NULL) {}
-    LL(Node* n) : head(n) {}
+    LL(Node* h) : head(h) {}
     ~LL();
     void push_back(int v);
-    void print();
     Node* get_head() const;
-
+private:
+    Node* head;
 };
+
+void print(Node* h);
+
 
 int main(int argc, char* argv[])
 {
@@ -39,20 +40,22 @@ int main(int argc, char* argv[])
     list.push_back(7);
     list.push_back(8);
     
-    list.print();
+    print(list.get_head());
 
     Node* listptr = list.get_head();
     Node* oddsptr = NULL;
     Node* evensptr = NULL;
     
     split(listptr, oddsptr, evensptr);
+    // ^ changes listptr to 0, issues with deallocation
+    // this is because the split function changes the original list
+    // and does not create separate LLs for odds and evens.
+    // in main we create an LL that split() disorganizes so it loses
+    // track of nodes and causes delete issues. 
     
-    // create lists with the returned header addresses
-    LL odds(oddsptr);   
-    LL evens(evensptr);
-
-    odds.print();
-    evens.print();
+    print(oddsptr);
+    print(evensptr);
+    print(list.get_head());
 
     return 0;
 }
@@ -71,16 +74,6 @@ void LL::push_back(int v)
     }
 }
 
-void LL::print()
-{
-    Node* temp = head;
-    while(temp){
-        std::cout << temp->value << " ";
-        temp = temp->next;
-    }
-    std::cout << std::endl;
-}
-
 Node* LL::get_head() const
 {
     return head;
@@ -94,4 +87,15 @@ LL::~LL()
         delete temp;   
         temp = next;
     }
+    head = NULL;
+}
+
+void print(Node* head)
+{
+    Node* temp = head;
+    while(temp){
+        std::cout << temp->value << " ";
+        temp = temp->next;
+    }
+    std::cout << std::endl;
 }

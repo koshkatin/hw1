@@ -22,14 +22,16 @@ void split(Node*& in, Node*& odds, Node*& evens)
   Node* next = in->next;  // save the next input node
 
   if (in->value % 2 == 0) { 
-    evens = new Node(in->value, evens);
+    in->next = evens;
+    evens = in;
   } else {
-    odds = new Node(in->value, odds);
+    in->next = odds;
+    odds = in;
   }
 
-  split(next, odds, evens);  // recurse
+  //in = NULL; // set the original list to NULL to prevent dangling ptrs
 
-  in = NULL; // set the original list to NULL to prevent dangling ptrs
+  split(next, odds, evens);  // recurse
 }
 
 /* If you needed a helper function, write it here */

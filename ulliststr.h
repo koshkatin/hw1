@@ -113,6 +113,12 @@ class ULListStr {
    */
   void clear();
 
+  /**
+   * Returns head_
+   */
+  Item* get_head() const;
+
+
  private:
   /** 
    * Returns a pointer to the item at index, loc,
