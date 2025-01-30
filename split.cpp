@@ -11,30 +11,25 @@ the function below should be the only one in this file.
 */
 
 #include "split.h"
+#include <cstddef>
 
 /* Add a prototype for a helper function here if you need */
 
 void split(Node*& in, Node*& odds, Node*& evens)
 {
-  /* Add code here */
-
-  // --- v.ii : implementation without 'new' ---
-
   if (!in) return;  // base case: NULL input
   
   Node* next = in->next;  // save the next input node
 
   if (in->value % 2 == 0) { 
-    in->next = evens;
-    evens = in;
+    evens = new Node(in->value, evens);
   } else {
-    in->next = odds;
-    odds = in;
+    odds = new Node(in->value, odds);
   }
 
-  in = next; // move to the next input node
+  split(next, odds, evens);  // recurse
 
-  split(in, odds, evens);  // recurse
+  in = NULL; // set the original list to NULL to prevent dangling ptrs
 }
 
 /* If you needed a helper function, write it here */

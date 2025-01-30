@@ -44,9 +44,11 @@ int main(int argc, char* argv[])
     Node* listptr = list.get_head();
     Node* oddsptr = NULL;
     Node* evensptr = NULL;
+    
     split(listptr, oddsptr, evensptr);
-
-    LL odds(oddsptr);
+    
+    // create lists with the returned header addresses
+    LL odds(oddsptr);   
     LL evens(evensptr);
 
     odds.print();
@@ -86,9 +88,10 @@ Node* LL::get_head() const
 
 LL::~LL()
 {
-    while(head){
-        Node* temp = head;
-        head = head->next;
-        delete temp;
+    Node* temp = head;
+    while(temp){
+        Node* next = temp->next;
+        delete temp;   
+        temp = next;
     }
 }
