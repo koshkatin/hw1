@@ -28,39 +28,62 @@ size_t ULListStr::size() const
 // WRITE YOUR CODE HERE
 void ULListStr::push_back(const std::string& val)
 {
-  Item* newItem = new Item;
+  // // --- v.ii : clean/concise ---
 
-  // case I : empty list
-  if (tail_ == NULL){   
-    newItem->first = 0;   // place at first index
-    newItem->val[newItem->first] = val; // [v][ ][ ][ ]
-    newItem->last = newItem->first + 1; // [f][l][ ][ ] ++ bounds checking? 
-    // prev and next are still null
+  //   if (tail_ == NULL){
+  //   tail_ = new Item; 
+  //   head_ = tail_;
+  //   }
+  //   else if (tail_->last == ARRSIZE){
+  //     Item* newItem = new Item;
+  //     newItem->prev = tail_;
+  //     tail_->next = newItem;
+  //     tail_ = newItem;
+  //   }
 
-    head_ = tail_ = newItem;  // point head and tail to new item
-  }
-  else {
-    // case II : non-empty list, right-full array
-    if (tail_->last >= ARRSIZE){ // indicates end-full array
-      newItem->first = 0;   // place at first index for congruity
+  //   tail_->val[tail_->last] = val;
+  //   tail_->last++;
+  //   size_++;
+
+  // // --------- * ----------
+  
+
+  // --- v.i : redundant/detailed ---
+
+    Item* newItem = new Item;
+
+    // case I : empty list
+    if (tail_ == NULL){   
+      newItem->first = 0;   // place at first index
       newItem->val[newItem->first] = val; // [v][ ][ ][ ]
       newItem->last = newItem->first + 1; // [f][l][ ][ ] ++ bounds checking? 
-      newItem->prev = tail_;  // connect newitem to previous node
-      newItem->next = NULL;   // last node
+      // prev and next are still null
 
-      tail_->next = newItem;  // connect previous node to newitem
-      tail_ = newItem;  // update tail to newitem 
+      head_ = tail_ = newItem;  // point head and tail to new item
     }
-    // case III : non-empty list, right-free array 
-    else {  
-      tail_->val[tail_->last] = val;         // [*][*][l][ ]
-      tail_->last++;  // increment last index   [*][*][v][l]
-      delete newItem;
-    }
-  }
-  // ? other cases
+    else {
+      // case II : non-empty list, right-full array
+      if (tail_->last >= ARRSIZE){ // indicates end-full array
+        newItem->first = 0;   // place at first index for congruity
+        newItem->val[newItem->first] = val; // [v][ ][ ][ ]
+        newItem->last = newItem->first + 1; // [f][l][ ][ ] ++ bounds checking? 
+        newItem->prev = tail_;  // connect newitem to previous node
+        newItem->next = NULL;   // last node
 
-  size_++;  // size increases in either case
+        tail_->next = newItem;  // connect previous node to newitem
+        tail_ = newItem;  // update tail to newitem 
+      }
+      // case III : non-empty list, right-free array 
+      else {  
+        tail_->val[tail_->last] = val;         // [*][*][l][ ]
+        tail_->last++;  // increment last index   [*][*][v][l]
+        delete newItem;
+      }
+    }
+
+    size_++;  // size increases in either case
+
+  // --------------- * --------------
 }
 
 void ULListStr::pop_back()
@@ -69,17 +92,19 @@ void ULListStr::pop_back()
   if (!tail_) return;
   
   // case II : non-empty list, non-empty array
-  if (tail_->last > tail_->first){
-    tail_->last--;  // move last index back
-    tail_->val[tail_->last] = ""; // clear value at last element
-  }
+  tail_->last--;  // move last index back
+  tail_->val[tail_->last] = ""; // clear value at last element
+  
   // case III : non-empty list, empty array >> delete node
-  else { 
+  if (tail_->last == 0) { // check if array empties after popping
     Item* temp = tail_;
     tail_ = tail_->prev; 
-    tail_->next = NULL;
+    if (tail_) {
+      tail_->next = nullptr;
+    } else {
+      head_ = nullptr; // List is now empty
+    }
     delete temp;
-    temp = NULL;
   }
   
   size_--;  // decrease size in non-empty cases
@@ -87,38 +112,62 @@ void ULListStr::pop_back()
 
 void ULListStr::push_front(const std::string& val)
 {
-  Item* newItem = new Item;
+  // // --- v.ii : clean/concise ---
 
-  // case I : empty list
-  if (head_ == NULL){
-    newItem->first = ARRSIZE - 1;        // [ ][ ][ ][f]
-    newItem->val[newItem->first] = val;  // [ ][ ][ ][v]
-    newItem->last = newItem->first + 1;  // [ ][ ][ ][f] l
-    // prev = next = null
+  //   if (head_ == NULL) { // List is empty
+  //     head_ = new Item();
+  //     tail_ = head_;
+  //   } 
+  //   else if (head_->first == 0) { // First item is full at the front
+  //     Item* newItem = new Item();
+  //     newItem->next = head_;
+  //     head_->prev = newItem;
+  //     head_ = newItem;
+  //   }
 
-    head_ = tail_ = newItem;
-  }
-  else {
-    // case II : non-empty list, left-full array
-    if (head_->first <= 0){
+  //   head_->first--;
+  //   head_->val[head_->first] = val;
+  //   size_++;
+
+  // // --------- * ----------
+
+  
+  // --- v.i : redundant/detailed ---
+
+    Item* newItem = new Item;
+
+    // case I : empty list
+    if (head_ == NULL){
       newItem->first = ARRSIZE - 1;        // [ ][ ][ ][f]
       newItem->val[newItem->first] = val;  // [ ][ ][ ][v]
       newItem->last = newItem->first + 1;  // [ ][ ][ ][f] l
-      newItem->prev = NULL;
-      newItem->next = head_;
+      // prev = next = null
 
-      head_->prev = newItem;
-      head_ = newItem;
+      head_ = tail_ = newItem;
     }
-    // case III : non-empty list, left-free array
     else {
-      head_->first--; // move first ptr back 
-      head_->val[head_->first] = val; // [v][f][*][ ]
-      delete newItem;
-    }
-  }
+      // case II : non-empty list, left-full array
+      if (head_->first <= 0){
+        newItem->first = ARRSIZE - 1;        // [ ][ ][ ][f]
+        newItem->val[newItem->first] = val;  // [ ][ ][ ][v]
+        newItem->last = newItem->first + 1;  // [ ][ ][ ][f] l
+        newItem->prev = NULL;
+        newItem->next = head_;
 
-  size_++;
+        head_->prev = newItem;
+        head_ = newItem;
+      }
+      // case III : non-empty list, left-free array
+      else {
+        head_->first--; // move first ptr back 
+        head_->val[head_->first] = val; // [v][f][*][ ]
+        delete newItem;
+      }
+    }
+
+    size_++;
+
+  // --------------- * --------------
 }
 
 void ULListStr::pop_front()
@@ -127,17 +176,19 @@ void ULListStr::pop_front()
   if (!head_) return; 
 
   // case II : non-empty list, non-empty array
-  if (head_->last > head_->first){
-    head_->val[head_->first] = "";  // [ ][ ][x][*]
-    head_->first++;                 // [ ][ ][ ][f]
-  }
+  head_->val[head_->first] = "";  // [ ][ ][x][*]
+  head_->first++;                 // [ ][ ][ ][f]
+  
   // case III : non-empty list, empty array
-  else {
+  if (head_->last == head_->first) {
     Item* temp = head_;
     head_ = head_->next;
-    head_->prev = NULL;
+    if (head_) {
+      head_->prev = nullptr;
+    } else {
+      tail_ = nullptr; // List is now empty
+    }
     delete temp;
-    temp = NULL;
   }
   
   size_--;
@@ -161,11 +212,15 @@ std::string* ULListStr::getValAtLoc(size_t loc) const
   Item* curr = head_;
 
   // determine which node the location falls in
-  size_t rank = loc / ARRSIZE;  
+  // add the first index to loc to shift it forward appropriately 
+  size_t rank = (loc + head_->first) / ARRSIZE;  
   
   Item* node = listRecurser(curr, rank);
   
-  return &(node->val[loc % ARRSIZE]);
+  size_t idx;
+  idx = (loc + head_->first) % ARRSIZE; 
+
+  return &(node->val[idx]);
 }
 
 

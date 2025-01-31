@@ -11,10 +11,12 @@ int main(int argc, char* argv[])
 {
     ULListStr dat;
 
-    // Push strings "0" to "10"
-    for (int i = 0; i <= 25; ++i) {
-        dat.push_back(std::to_string(i));
-    }
+    // // Push strings "0" to "10"
+    // for (int i = 0; i <= 25; ++i) {
+    //     dat.push_back(std::to_string(i));
+    // }
+
+    dat.push_front("a");
 
     // Print the list
     ULListStr::Item* current = dat.get_head();
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
     }
     std::cout << std::endl;
 
-    std::cout << "got: " << dat.get(13) << std::endl;
+    std::cout << "got: " << dat.get(0) << std::endl;
     
     return 0;
 }
