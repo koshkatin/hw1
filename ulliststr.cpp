@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <stdexcept>
+#include <iostream>
 #include "ulliststr.h"
 
 ULListStr::ULListStr()
@@ -54,6 +55,7 @@ void ULListStr::push_back(const std::string& val)
     else {  
       tail_->val[tail_->last] = val;         // [*][*][l][ ]
       tail_->last++;  // increment last index   [*][*][v][l]
+      delete newItem;
     }
   }
   // ? other cases
@@ -66,24 +68,20 @@ void ULListStr::pop_back()
   // case I : empty list
   if (!tail_) return;
   
-  // case II : non-empty list
-  else {
+  // case II : non-empty list, non-empty array
+  if (tail_->last > tail_->first){
     tail_->last--;  // move last index back
     tail_->val[tail_->last] = ""; // clear value at last element
-    
-    // check if array empties after popping
-    if (tail_->last <= 0){
-      Item* temp = tail_;
-      tail_ = tail_->prev; 
-      tail_->next = NULL;
-      delete temp;
-      temp->prev = NULL;
-      temp->next = NULL;
-      temp = NULL;
-    }
   }
-
-
+  // case III : non-empty list, empty array >> delete node
+  else { 
+    Item* temp = tail_;
+    tail_ = tail_->prev; 
+    tail_->next = NULL;
+    delete temp;
+    temp = NULL;
+  }
+  
   size_--;  // decrease size in non-empty cases
 }
 
@@ -116,15 +114,58 @@ void ULListStr::push_front(const std::string& val)
     else {
       head_->first--; // move first ptr back 
       head_->val[head_->first] = val; // [v][f][*][ ]
+      delete newItem;
     }
   }
 
   size_++;
 }
 
+void ULListStr::pop_front()
+{
+  // case I : empty list
+  if (!head_) return; 
+
+  // case II : non-empty list, non-empty array
+  if (head_->last > head_->first){
+    head_->val[head_->first] = "";  // [ ][ ][x][*]
+    head_->first++;                 // [ ][ ][ ][f]
+  }
+  // case III : non-empty list, empty array
+  else {
+    Item* temp = head_;
+    head_ = head_->next;
+    head_->prev = NULL;
+    delete temp;
+    temp = NULL;
+  }
+  
+  size_--;
+}
+
+std::string const & ULListStr::back() const
+{
+  return tail_->val[tail_->last - 1];
+}
+
+
+std::string const & ULListStr::front() const
+{
+  return head_->val[head_->first];
+}
+
 std::string* ULListStr::getValAtLoc(size_t loc) const
 {
-  return nullptr;
+  // return NULL if loc is invalid
+  if (loc < 0 || loc >= size_) return NULL;
+  Item* curr = head_;
+
+  // determine which node the location falls in
+  size_t rank = loc / ARRSIZE;  
+  
+  Item* node = listRecurser(curr, rank);
+  
+  return &(node->val[loc % ARRSIZE]);
 }
 
 
@@ -157,12 +198,12 @@ std::string const & ULListStr::get(size_t loc) const
 
 void ULListStr::clear()
 {
-  while(head_ != NULL){
-    Item *temp = head_->next;
+  while (head_ != nullptr) {
+    Item* temp = head_->next;
     delete head_;
     head_ = temp;
   }
-  tail_ = NULL;
+  tail_ = nullptr;
   size_ = 0;
 }
 
@@ -170,3 +211,12 @@ ULListStr::Item* ULListStr::get_head() const
 {
   return head_;
 }
+
+ULListStr::Item* ULListStr::listRecurser(Item* node, size_t rank) const
+{
+  if (node == NULL) return NULL;  // not found
+  if (rank == 0) return node;     // found!
+  rank--;   // decrementing rank means moving to next node
+  return listRecurser(node->next, rank);
+}
+

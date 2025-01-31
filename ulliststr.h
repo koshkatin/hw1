@@ -127,6 +127,10 @@ class ULListStr {
    */
   std::string* getValAtLoc(size_t loc) const;
 
+  /** 
+   *  Traverses the list to find desired index
+   */
+  ULListStr::Item* listRecurser(Item* node, size_t rank) const;
 
   /**
    * Data members
