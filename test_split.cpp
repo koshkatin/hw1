@@ -20,17 +20,19 @@ public:
     ~LL();
     void push_back(int v);
     Node* get_head() const;
+    void set_head(Node* n);
 private:
     Node* head;
 };
 
 void print(Node* h);
+void deleteNode(Node* h);
 
 
 int main(int argc, char* argv[])
 {
     LL list;
-    list.push_back(0);
+    list.push_back(1);
     list.push_back(1);
     list.push_back(2);
     list.push_back(3);
@@ -55,6 +57,11 @@ int main(int argc, char* argv[])
     
     print(oddsptr);
     print(evensptr);
+
+    list.set_head(NULL);
+    deleteNode(oddsptr);
+    deleteNode(evensptr);
+
     print(list.get_head());
 
     return 0;
@@ -79,15 +86,14 @@ Node* LL::get_head() const
     return head;
 }
 
+void LL::set_head(Node* n)
+{
+    head = n;
+}
+
 LL::~LL()
 {
-    Node* temp = head;
-    while(temp){
-        Node* next = temp->next;
-        delete temp;   
-        temp = next;
-    }
-    head = NULL;
+    deleteNode(head);
 }
 
 void print(Node* head)
@@ -98,4 +104,15 @@ void print(Node* head)
         temp = temp->next;
     }
     std::cout << std::endl;
+}
+
+void deleteNode(Node* head)
+{
+    Node* temp = head;
+    while(temp){
+        Node* next = temp->next;
+        delete temp;   
+        temp = next;
+    }
+    head = NULL;
 }
